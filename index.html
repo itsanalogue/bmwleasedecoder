@@ -115,8 +115,14 @@
             {
                 return showError('Lease term was not found.');
             }
-            document.getElementById('resultTerm').innerHTML = termMatch[1] + ' months';
             const term = Number(termMatch[1]);
+            document.getElementById('resultTerm').innerHTML = term + ' months';
+
+            const milesMatch = dealInfo.match(/mile over ([\d,]+) miles/i);
+            if (milesMatch)
+            {
+                document.getElementById('resultMiles').innerHTML = milesMatch[1];
+            }
 
             const mf = Math.round(((monthly * term - (capCost - rv))/((capCost + rv) * term)) * 100000) / 100000;
             document.getElementById('resultMF').innerHTML = mf;
@@ -171,6 +177,8 @@
                     <dt id="resultMonthly"></dt>
                     <dd>Term</dd>
                     <dt id="resultTerm"></dt>
+                    <dd>Miles</dd>
+                    <dt id="resultMiles"></dt>
                     <hr>                
                     <dd>Money Factor</dd>
                     <dt id="resultMF"></dt>
