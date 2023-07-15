@@ -69,10 +69,17 @@
             return true;
         }
 
-        function onDecode () {
+        function setValue(elementId, text) {
+            document.getElementById(elementId).innerHTML = text;
+        }
 
-            document.getElementById('errorMsg').style.display = 'none';
-            document.getElementById('resultDiv').style.display = 'none';
+        function hide(elementId){
+            document.getElementById(elementId).style.display = 'none';
+        }
+
+        function onDecode () {
+            hide('errorMsg');
+            hide('resultDiv');
 
             const dealInfo = document.getElementById('dealInfo').value;
 
@@ -84,7 +91,7 @@
                 return showError('MSRP was not found.');
             }
             const msrp = Number(msrpMatch[1].replace(/[\$,]/g,''));
-            document.getElementById('resultMSRP').innerHTML = moneyFormat.format(msrp);
+            setValue('resultMSRP', moneyFormat.format(msrp));
 
             const capCostMatch = dealInfo.match(/adjusted capitalized cost of ([\$\d,]+)/i);
             if (!capCostMatch)
@@ -92,7 +99,7 @@
                 return showError('Adjusted capitalized cost was not found.');
             }
             const capCost = Number(capCostMatch[1].replace(/[\$,]/g,''));
-            document.getElementById('resultCapCost').innerHTML = moneyFormat.format(capCost);
+            setValue('resultCapCost', moneyFormat.format(capCost));
 
             const rvMatch = dealInfo.match(/Purchase option price at lease end is ([\$\d,]+)/i);
             if (!rvMatch)
@@ -100,7 +107,7 @@
                 return showError('Residual value was not found.');
             }
             const rv = Number(rvMatch[1].replace(/[\$,]/g,''));
-            document.getElementById('resultResidual').innerHTML = moneyFormat.format(rv);
+            setValue('resultResidual', moneyFormat.format(rv));
 
             const monthlyMatch = dealInfo.match(/Monthly lease payments of ([\$\d,]+)/i);
             if (!monthlyMatch)
@@ -108,7 +115,7 @@
                 return showError('Monthly payment amount was not found.');
             }
             const monthly = Number(monthlyMatch[1].replace(/[\$,]/g,''));
-            document.getElementById('resultMonthly').innerHTML = moneyFormat.format(monthly);
+            setValue('resultMonthly', moneyFormat.format(monthly));
 
             const termMatch = dealInfo.match(/for ([\d]+) months/i);
             if (!termMatch)
@@ -116,35 +123,35 @@
                 return showError('Lease term was not found.');
             }
             const term = Number(termMatch[1]);
-            document.getElementById('resultTerm').innerHTML = term + ' months';
+            setValue('resultTerm', term + ' months');
 
             const milesMatch = dealInfo.match(/mile over ([\d,]+) miles/i);
             if (milesMatch)
             {
-                document.getElementById('resultMiles').innerHTML = milesMatch[1];
+                setValue('resultMiles', milesMatch[1]);
             }
 
             const mf = Math.round(((monthly * term - (capCost - rv))/((capCost + rv) * term)) * 100000) / 100000;
-            document.getElementById('resultMF').innerHTML = mf;
-            document.getElementById('resultAPR').innerHTML = Math.round(mf*2400 * 100)/100+'%';
+            setValue('resultMF', mf);
+            setValue('resultAPR', Math.round(mf*2400 * 100)/100+'%');
 
-            const residualPercent = Math.round((100 * rv / msrp));
-            document.getElementById('resultResidualPercent').innerHTML = residualPercent  + '%';
+            const residualPercent = Math.round(100 * rv / msrp);
+            setValue('resultResidualPercent', residualPercent  + '%');
 
             const monthlyDepreciation = Math.round(((capCost-rv)/term)* 100) /100;
-            document.getElementById('resultMonthlyDepreciation').innerHTML = moneyFormat.format(monthlyDepreciation);
+            setValue('resultMonthlyDepreciation', moneyFormat.format(monthlyDepreciation));
 
             const monthlyRent = monthly - monthlyDepreciation;
-            document.getElementById('resultMonthlyRent').innerHTML = moneyFormat.format(monthlyRent);
+            setValue('resultMonthlyRent', moneyFormat.format(monthlyRent));
 
             const totalDepreciation = capCost-rv;
-            document.getElementById('resultTotalDepreciation').innerHTML = moneyFormat.format(totalDepreciation);
+            setValue('resultTotalDepreciation', moneyFormat.format(totalDepreciation));
 
             const totalRent = monthlyRent * term;
-            document.getElementById('resultTotalRent').innerHTML = moneyFormat.format(totalRent);
+            setValue('resultTotalRent', moneyFormat.format(totalRent));
 
             const totalCost = monthly * term;
-            document.getElementById('resultTotalCost').innerHTML = moneyFormat.format(totalCost);
+            setValue('resultTotalCost', moneyFormat.format(totalCost));
 
 
             document.getElementById('resultDiv').style.display = 'block';
@@ -167,36 +174,36 @@
             <hr>
             <div>
                 <dl>
-                    <dd>MSRP</dd>
-                    <dt id="resultMSRP"></dt>
-                    <dd>Adjusted Cap Cost</dd>
-                    <dt id="resultCapCost"></dt>
-                    <dd>Residual Value</dd>
-                    <dt id="resultResidual"></dt>
-                    <dd>Monthly Payment</dd>
-                    <dt id="resultMonthly"></dt>
-                    <dd>Term</dd>
-                    <dt id="resultTerm"></dt>
-                    <dd>Miles</dd>
-                    <dt id="resultMiles"></dt>
-                    <hr>                
                     <dd>Money Factor</dd>
                     <dt id="resultMF"></dt>
                     <dd>Equivalent APR</dd>
                     <dt id="resultAPR"></dt>
                     <dd>Residual</dd>
                     <dt id="resultResidualPercent"></dt>
+                    <hr>                
+                    <dd>Monthly Payment</dd>
+                    <dt id="resultMonthly"></dt>
+                    <dd>Term</dd>
+                    <dt id="resultTerm"></dt>
+                    <dd>Miles</dd>
+                    <dt id="resultMiles"></dt>
+                    <dd>MSRP</dd>
+                    <dt id="resultMSRP"></dt>
+                    <dd>Adjusted Cap Cost</dd>
+                    <dt id="resultCapCost"></dt>
+                    <dd>Residual Value</dd>
+                    <dt id="resultResidual"></dt>
                     <hr>
-                    <dd>Monthly Depreciation</dd>
-                    <dt id="resultMonthlyDepreciation"></dt>
-                    <dd>Monthly Rent</dd>
-                    <dt id="resultMonthlyRent"></dt>
+                    <dd>Total Cost</dd>
+                    <dt id="resultTotalCost"></dt>
                     <dd>Total Depreciation</dd>
                     <dt id="resultTotalDepreciation"></dt>
                     <dd>Total Rent</dd>
                     <dt id="resultTotalRent"></dt>
-                    <dd>Total Cost</dd>
-                    <dt id="resultTotalCost"></dt>
+                    <dd>Monthly Depreciation</dd>
+                    <dt id="resultMonthlyDepreciation"></dt>
+                    <dd>Monthly Rent</dd>
+                    <dt id="resultMonthlyRent"></dt>
                 </dl>        
             </div>
         </div>            
